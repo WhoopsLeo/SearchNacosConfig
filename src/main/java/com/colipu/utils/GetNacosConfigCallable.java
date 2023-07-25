@@ -173,7 +173,7 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
             String content;
             content = getNacosConfig(client, instanceId, nameSpaceId, dataId, group);
             if (content == null) {
-                System.out.println("没有相关配置");
+                System.out.println("调阿里云，获取的Nacos配置文件为null");
                 return null;
             }
             String matched = matchSubString(dataId, content, targetSubString);

@@ -42,7 +42,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
 
             List<ListNacosConfigsResponseBody.ListNacosConfigsResponseBodyConfigurations> nacosConfigsList = getNacosConfigsList(client, instanceId, nameSpaceId, pageNum, pageSize);
             if (nacosConfigsList == null) {
-                return Result.fail("没有相关配置");
+                return Result.fail("调阿里云，获取的Nacos配置列表为null");
             }
 
             // 创建线程池
@@ -116,7 +116,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
             String instanceId,
             String nameSpaceId,
             Integer pageNum,
-            Integer pageSize) throws Exception {
+            Integer pageSize) {
         ListNacosConfigsRequest listNacosConfigsRequest = new ListNacosConfigsRequest()
                 .setInstanceId(instanceId)
                 .setNamespaceId(nameSpaceId)
@@ -136,7 +136,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
         } catch (Exception _error) {
             TeaException error = new TeaException(_error.getMessage(), _error);
             // 如有需要，请打印 error
-            System.out.println(Common.assertAsString(error.message));
+            log.error("获取阿里云Nacos配置列表出错",error);
         }
         return null;
     }
