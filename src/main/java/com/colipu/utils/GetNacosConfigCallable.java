@@ -111,12 +111,21 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
         this.latch = latch;
     }
 
+    /**
+     * 获取Nacos配置文件的内容
+     * @param client
+     * @param instanceId
+     * @param nameSpaceId
+     * @param dataId
+     * @param group
+     * @return
+     */
     public String getNacosConfig(
             Client client,
             String instanceId,
             String nameSpaceId,
             String dataId,
-            String group) throws Exception {
+            String group) {
         GetNacosConfigRequest getNacosConfigRequest = new GetNacosConfigRequest()
                 .setInstanceId(instanceId)
                 .setDataId(dataId)
@@ -124,22 +133,26 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
                 .setNamespaceId(nameSpaceId);
         RuntimeOptions runtime = new RuntimeOptions();
         try {
-
             GetNacosConfigResponse nacosConfigWithOptions = client.getNacosConfigWithOptions(getNacosConfigRequest, runtime);
             // 获得配置文件的具体内容
             String content = nacosConfigWithOptions.getBody().getConfiguration().getContent();
             return content;
         } catch (TeaException error) {
-            // 如有需要，请打印 error
             System.out.println(Common.assertAsString(error.message));
         } catch (Exception _error) {
             TeaException error = new TeaException(_error.getMessage(), _error);
-            // 如有需要，请打印 error
             System.out.println(Common.assertAsString(error.message));
         }
         return null;
     }
 
+    /**
+     * 搜索配置文件是否包含目标字符串
+     * @param dataId
+     * @param content
+     * @param targetSubString
+     * @return 目标字符串所在的一行的字符串
+     */
     public String matchSubString(String dataId, String content, String targetSubString) {
         if (!content.contains(targetSubString)) {
             return null;
@@ -150,7 +163,7 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
         for (int i = 0; i < linesArray.length; i++) {
             String line = linesArray[i];
             if (line.contains(targetSubString)) {
-                sb.append("Config_Content:");
+//                sb.append("Config_Content:");
 //                if (i - 1 >= 0) {
 //                    sb.append(linesArray[i - 1]);
 //                }
@@ -173,7 +186,7 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
             String content;
             content = getNacosConfig(client, instanceId, nameSpaceId, dataId, group);
             if (content == null) {
-                System.out.println("调阿里云，获取的Nacos配置文件为null");
+                System.out.println("调阿里云接口，获取的Nacos配置文件为null");
                 return null;
             }
             String matched = matchSubString(dataId, content, targetSubString);
