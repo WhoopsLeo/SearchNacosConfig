@@ -1,0 +1,9 @@
+server:
+  port: 8888
+
+logging:
+  level:
+    com.colipu: debug
+  pattern:
+    dateformat: mm:ss.SSS
+
