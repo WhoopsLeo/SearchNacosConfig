@@ -84,7 +84,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
         System.out.println("检索完成：" + sdf.format(new Date()));
 
         if (resultList.size() == 0) {
-            return Result.fail("没有该内容");
+            return Result.fail("配置文件中没有该内容");
         }
 
         String result = resultList.toString();
