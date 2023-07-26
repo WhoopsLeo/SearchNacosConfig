@@ -8,11 +8,11 @@
         <version>2.3.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>com.colipu</groupId>
     <artifactId>SearchNaosConfigSpring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>HelloWorld</name>
-    <description>HelloWorld</description>
+    <name>SearchNaosConfigSpring</name>
+    <description>SearchNaosConfigSpring</description>
     <properties>
         <java.version>8</java.version>
     </properties>
@@ -71,6 +71,16 @@
             <groupId>com.aliyun</groupId>
             <artifactId>credentials-java</artifactId>
             <version>0.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.18</version>
+        </dependency>
+        <dependency>
+            <groupId>jcifs</groupId>
+            <artifactId>jcifs</artifactId>
+            <version>1.3.17</version>
         </dependency>
     </dependencies>
 

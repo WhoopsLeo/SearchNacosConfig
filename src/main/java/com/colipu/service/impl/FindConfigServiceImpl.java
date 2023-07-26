@@ -6,19 +6,16 @@ import com.aliyun.mse20190531.models.ListNacosConfigsResponse;
 import com.aliyun.mse20190531.models.ListNacosConfigsResponseBody;
 import com.aliyun.mse20190531.models.ListNacosConfigsResponseBody.ListNacosConfigsResponseBodyConfigurations;
 import com.aliyun.tea.TeaException;
-import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
-import com.colipu.dto.NacosConfigurationDto;
+import com.colipu.dto.ConfigurationDto;
 import com.colipu.dto.Result;
 import com.colipu.service.IFindConfigService;
 import com.colipu.utils.GetNacosConfigCallable;
+import com.colipu.utils.SmbUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -38,7 +35,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
      */
     @Override
     public Result findConfig(String instanceId, String nameSpaceId, Integer pageNum, Integer pageSize, String targetSubString) {
-        ArrayList<NacosConfigurationDto> resultList = new ArrayList<>();
+        ArrayList<ConfigurationDto> resultList = new ArrayList<>();
 
         try {
 
@@ -54,7 +51,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
 
             // 创建线程池, 用于加快配置文件内容的搜索
             ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                    30,
+                    32,
                     40,
                     1L,
                     TimeUnit.SECONDS,
@@ -64,22 +61,22 @@ public class FindConfigServiceImpl implements IFindConfigService {
             int numTasks = nacosConfigsList.size();
             // 利用CountDownLatch，确保线程池关闭时，所有配置文件都搜索过了
             CountDownLatch latch = new CountDownLatch(numTasks);
-            List<Future<NacosConfigurationDto>> futures = new ArrayList<>();
+            List<Future<ConfigurationDto>> futures = new ArrayList<>();
 
             for (ListNacosConfigsResponseBodyConfigurations nacosConfig : nacosConfigsList) {
 
                 GetNacosConfigCallable nacosConfigCallable = new GetNacosConfigCallable(nacosConfig, client, instanceId, nameSpaceId, nacosConfig.getDataId(), nacosConfig.getGroup(), targetSubString, latch);
-                Future<NacosConfigurationDto> future = executor.submit(nacosConfigCallable);
+                Future<ConfigurationDto> future = executor.submit(nacosConfigCallable);
                 futures.add(future);
             }
             // 等待CountDownLatch减为0后，在执行后面的代码
             latch.await(20, TimeUnit.SECONDS);
 
 
-            for (Future<NacosConfigurationDto> future : futures) {
+            for (Future<ConfigurationDto> future : futures) {
                 if (future.get() != null) {
-                    NacosConfigurationDto nacosConfigurationDto = future.get();
-                    resultList.add(nacosConfigurationDto);
+                    ConfigurationDto configurationDto = future.get();
+                    resultList.add(configurationDto);
                 }
 
             }
@@ -96,6 +93,26 @@ public class FindConfigServiceImpl implements IFindConfigService {
         }
 
         return Result.ok(resultList, (long) resultList.size());
+    }
+
+    /**
+     * 查询公盘文件中的配置是否包含目标子串
+     *
+     * @param targetSubString
+     * @return
+     */
+    @Override
+    public Result findSharedFileConfig(String ip,String targetSubString) {
+        log.info("获取公盘文件===>> 开始");
+        String domain ="colipu";
+        String user = "xuwenjie";
+        String pass = "Asdf19971017";
+        // smb://colipu;xuwenjie:Asdf19971017@10.10.18.109/moveinconfig/
+        String invoiceGroupReceiversLocalSharePath= "smb://"+domain+";"+user+":"+pass+"@"+ ip +"/moveinconfig/";
+        SmbUtil.ConnectionState(ip,domain,user,pass);
+
+
+        return SmbUtil.getSharedFileList(invoiceGroupReceiversLocalSharePath,targetSubString);
     }
 
     /**

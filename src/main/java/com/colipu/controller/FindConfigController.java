@@ -14,18 +14,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/NacosConfig")
+@RequestMapping("/Config")
 public class FindConfigController {
 
     @Resource
     private IFindConfigService findConfigService;
 
-    @RequestMapping("/search")
-    public Result search(@RequestParam(required = false, value = "instanceId",defaultValue = "mse_prepaid_public_cn-2r42fir9y0f") String instanceId,
+    @RequestMapping("/searchNacos")
+    public Result searchNacos(@RequestParam(required = false, value = "instanceId",defaultValue = "mse_prepaid_public_cn-2r42fir9y0f") String instanceId,
                          @RequestParam("nameSpaceId") String nameSpaceId,
                          @RequestParam(required = false, value = "pageNum", defaultValue = "1") Integer pageNum,
                          @RequestParam(required = false, value = "pageSize", defaultValue = "500") Integer pageSize,
                          @RequestParam("targetSubstring") String targetSubString) throws Exception {
         return findConfigService.findConfig(instanceId, nameSpaceId, pageNum, pageSize, targetSubString);
+    }
+
+    @RequestMapping("/searchShared")
+    public Result searchSharedFile(@RequestParam("ip") String ip, @RequestParam("targetSubstring") String targetSubstring){
+        return findConfigService.findSharedFileConfig(ip,targetSubstring);
     }
 }

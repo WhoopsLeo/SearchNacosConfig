@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NacosConfigurationDto {
+public class ConfigurationDto {
     private String group;
     private String dataId;
     private String content;

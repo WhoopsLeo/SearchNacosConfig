@@ -7,13 +7,12 @@ import com.aliyun.mse20190531.models.ListNacosConfigsResponseBody;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
-import com.colipu.dto.NacosConfigurationDto;
-import com.colipu.dto.Result;
+import com.colipu.dto.ConfigurationDto;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
-public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
+public class GetNacosConfigCallable implements Callable<ConfigurationDto> {
 
     private ListNacosConfigsResponseBody.ListNacosConfigsResponseBodyConfigurations nacosConfig;
 
@@ -178,9 +177,9 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
 
 
     @Override
-    public NacosConfigurationDto call() {
+    public ConfigurationDto call() {
         try{
-            NacosConfigurationDto nacosConfigurationDto = new NacosConfigurationDto();
+            ConfigurationDto configurationDto = new ConfigurationDto();
             String dataId = nacosConfig.getDataId();
             String group = nacosConfig.getGroup();
             String content;
@@ -193,10 +192,10 @@ public class GetNacosConfigCallable implements Callable<NacosConfigurationDto> {
             if(matched == null){
                 return null;
             }
-            nacosConfigurationDto.setGroup(group);
-            nacosConfigurationDto.setDataId(dataId);
-            nacosConfigurationDto.setContent(matched);
-            return nacosConfigurationDto;
+            configurationDto.setGroup(group);
+            configurationDto.setDataId(dataId);
+            configurationDto.setContent(matched);
+            return configurationDto;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
