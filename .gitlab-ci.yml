@@ -5,7 +5,7 @@ include:
 
 variables:
   # 应用名称(最新版要求不要带api字样)
-  APP_NAME: demoxwj
+  APP_NAME: match-config-java-api
   # 应用所属命名空间 如果不同环境不一样，则添加后缀配置（后缀配置优先）
   K8S_DEPLOYMENT_NAMESPACE: ops
   K8S_DEPLOYMENT_NAMESPACE_DEV: ops
@@ -19,7 +19,7 @@ variables:
   NEED_POWER: "TRUE"
   # 域名后缀配置 dev环境将生成 jv-devdemoapi.colipu.com test uat一样，生产环境为 jv-demoapi.colipu.com 默认同时支持http和https
   # 如果是node项目不会增加jv-前缀
-  APP_HOST: demoxwj.colipu.com
+  APP_HOST: matchconfig.colipu.com
   # 针对.netcore项目，这里需要配置解决方案下子项目文件夹(启动项目)名称
   # APP_DIR: ""
   # 部分应用有特殊需求，例如需要容器内安装某些字体，那么可以在这里添加 docker 命令 自行处理
