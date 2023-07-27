@@ -104,19 +104,16 @@ public class FindConfigServiceImpl implements IFindConfigService {
      * @return
      */
     @Override
-    public Result findSharedFileConfig(String ip,String targetSubString) {
+    public Result findSharedFileConfig(String ip, String targetSubString, String domain) {
         log.info("获取公盘文件===>> 开始");
-        String domain ="colipu";
-        String user = "xuwenjie";
-//        String user = System.getenv("SHARE_USERNAME");
-        String password = "Asdf19971017";
-//        String password = System.getenv("SHARE_PASSWORD");
+        String user = System.getenv("SHARE_USERNAME");
+        String password = System.getenv("SHARE_PASSWORD");
 
-        String invoiceGroupReceiversLocalSharePath= "smb://"+domain+";"+user+":"+password+"@"+ ip +"/moveinconfig/";
-        SmbUtil.ConnectionState(ip,domain,user,password);
+        String invoiceGroupReceiversLocalSharePath = "smb://" + domain + ";" + user + ":" + password + "@" + ip + "/moveinconfig/";
+        SmbUtil.ConnectionState(ip, domain, user, password);
 
 
-        return SmbUtil.getSharedFileList(invoiceGroupReceiversLocalSharePath,targetSubString);
+        return SmbUtil.getSharedFileList(invoiceGroupReceiversLocalSharePath, targetSubString);
     }
 
     /**
@@ -127,7 +124,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
      * @return Client
      * @throws Exception
      */
-    public  Client createClient(String accessKeyId, String accessKeySecret) throws Exception {
+    public Client createClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
                 // 必填，您的 AccessKey ID
                 .setAccessKeyId(accessKeyId)
@@ -140,6 +137,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
 
     /**
      * 获取Nacos配置列表
+     *
      * @param client
      * @param instanceId
      * @param nameSpaceId
@@ -147,7 +145,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
      * @param pageSize
      * @return
      */
-    public  List<ListNacosConfigsResponseBodyConfigurations> getNacosConfigsList(
+    public List<ListNacosConfigsResponseBodyConfigurations> getNacosConfigsList(
             Client client,
             String instanceId,
             String nameSpaceId,

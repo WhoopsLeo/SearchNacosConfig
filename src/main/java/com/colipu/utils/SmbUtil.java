@@ -127,6 +127,7 @@ public class SmbUtil {
                                     return null;
                                 }
                             });
+                            // 过滤掉那些没有匹配到目标字符串的configurationDto
                             if (future.get() != null){
                                 list.add(future);
                             }

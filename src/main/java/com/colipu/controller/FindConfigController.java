@@ -21,16 +21,18 @@ public class FindConfigController {
     private IFindConfigService findConfigService;
 
     @RequestMapping("/searchNacos")
-    public Result searchNacos(@RequestParam(required = false, value = "instanceId",defaultValue = "mse_prepaid_public_cn-2r42fir9y0f") String instanceId,
-                         @RequestParam("nameSpaceId") String nameSpaceId,
-                         @RequestParam(required = false, value = "pageNum", defaultValue = "1") Integer pageNum,
-                         @RequestParam(required = false, value = "pageSize", defaultValue = "500") Integer pageSize,
-                         @RequestParam("targetSubstring") String targetSubString) throws Exception {
+    public Result searchNacos(@RequestParam(required = false, value = "instanceId", defaultValue = "mse_prepaid_public_cn-2r42fir9y0f") String instanceId,
+                              @RequestParam("nameSpaceId") String nameSpaceId,
+                              @RequestParam(required = false, value = "pageNum", defaultValue = "1") Integer pageNum,
+                              @RequestParam(required = false, value = "pageSize", defaultValue = "500") Integer pageSize,
+                              @RequestParam("targetSubstring") String targetSubString) throws Exception {
         return findConfigService.findConfig(instanceId, nameSpaceId, pageNum, pageSize, targetSubString);
     }
 
     @RequestMapping("/searchShared")
-    public Result searchSharedFile(@RequestParam("ip") String ip, @RequestParam("targetSubstring") String targetSubstring){
-        return findConfigService.findSharedFileConfig(ip,targetSubstring);
+    public Result searchSharedFile(@RequestParam("ip") String ip,
+                                   @RequestParam("targetSubstring") String targetSubstring,
+                                   @RequestParam("domain") String domain) {
+        return findConfigService.findSharedFileConfig(ip, targetSubstring, domain);
     }
 }
