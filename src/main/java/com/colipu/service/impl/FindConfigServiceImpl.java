@@ -104,8 +104,9 @@ public class FindConfigServiceImpl implements IFindConfigService {
      * @return
      */
     @Override
-    public Result findSharedFileConfig(String ip, String targetSubString, String domain) {
+    public Result findSharedFileConfig(String ip, String targetSubString) {
         log.info("获取公盘文件===>> 开始");
+        String domain = System.getenv("DOMAIN");
         String user = System.getenv("SHARE_USERNAME");
         String password = System.getenv("SHARE_PASSWORD");
 

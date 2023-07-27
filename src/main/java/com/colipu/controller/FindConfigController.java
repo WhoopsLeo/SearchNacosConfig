@@ -31,8 +31,7 @@ public class FindConfigController {
 
     @RequestMapping("/searchShared")
     public Result searchSharedFile(@RequestParam("ip") String ip,
-                                   @RequestParam("targetSubstring") String targetSubstring,
-                                   @RequestParam("domain") String domain) {
-        return findConfigService.findSharedFileConfig(ip, targetSubstring, domain);
+                                   @RequestParam("targetSubstring") String targetSubstring) {
+        return findConfigService.findSharedFileConfig(ip, targetSubstring);
     }
 }
