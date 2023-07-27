@@ -23,7 +23,7 @@ class FindConfigTests {
 
     @Test
     public void findSharedFileConfig(){
-        Result result = findConfigService.findSharedFileConfig("10.10.18.109","LuceneIndexPath","colipu");
+        Result result = findConfigService.findSharedFileConfig("10.10.18.109","LuceneIndexPath");
         System.out.println(result);
     }
 }

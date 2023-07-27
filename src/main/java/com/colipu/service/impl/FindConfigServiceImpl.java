@@ -106,7 +106,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
     @Override
     public Result findSharedFileConfig(String ip, String targetSubString) {
         log.info("获取公盘文件===>> 开始");
-        String domain = System.getenv("DOMAIN");
+        String domain = "colipu";
         String user = System.getenv("SHARE_USERNAME");
         String password = System.getenv("SHARE_PASSWORD");
 
