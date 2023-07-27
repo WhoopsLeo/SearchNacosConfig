@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.colipu</groupId>
-    <artifactId>SearchNaosConfigSpring</artifactId>
+    <artifactId>SearchConfig</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>SearchNaosConfigSpring</name>
     <description>SearchNaosConfigSpring</description>

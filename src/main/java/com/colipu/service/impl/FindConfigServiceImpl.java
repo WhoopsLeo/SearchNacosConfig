@@ -15,13 +15,16 @@ import com.colipu.utils.SmbUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+
 @Slf4j
 @Service
 public class FindConfigServiceImpl implements IFindConfigService {
+
 
     /**
      * 查询Nacos配置中是否包含目标子串
@@ -35,28 +38,26 @@ public class FindConfigServiceImpl implements IFindConfigService {
      */
     @Override
     public Result findConfig(String instanceId, String nameSpaceId, Integer pageNum, Integer pageSize, String targetSubString) {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                30,
+                50,
+                500,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingDeque<>(1000),
+                new ThreadPoolExecutor.AbortPolicy());
+
         ArrayList<ConfigurationDto> resultList = new ArrayList<>();
 
         try {
 
-            // 请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_ID 和 ALIBABA_CLOUD_ACCESS_KEY_SECRET。
-            // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考，建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378657.html
             Client client = createClient(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"), System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"));
 
             List<ListNacosConfigsResponseBodyConfigurations> nacosConfigsList = getNacosConfigsList(client, instanceId, nameSpaceId, pageNum, pageSize);
 
             if (nacosConfigsList == null) {
+                log.error("调阿里云的接口，获取的Nacos配置列表为null");
                 return Result.fail("调阿里云的接口，获取的Nacos配置列表为null");
             }
-
-            // 创建线程池, 用于加快配置文件内容的搜索
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                    32,
-                    40,
-                    1L,
-                    TimeUnit.SECONDS,
-                    new LinkedBlockingDeque<Runnable>(),
-                    new ThreadPoolExecutor.AbortPolicy());
 
             int numTasks = nacosConfigsList.size();
             // 利用CountDownLatch，确保线程池关闭时，所有配置文件都搜索过了
@@ -89,6 +90,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
         }
 
         if (resultList.size() == 0) {
+            log.error("配置文件中没有该内容");
             return Result.fail("配置文件中没有该内容");
         }
 
@@ -106,10 +108,12 @@ public class FindConfigServiceImpl implements IFindConfigService {
         log.info("获取公盘文件===>> 开始");
         String domain ="colipu";
         String user = "xuwenjie";
-        String pass = "Asdf19971017";
-        // smb://colipu;xuwenjie:Asdf19971017@10.10.18.109/moveinconfig/
-        String invoiceGroupReceiversLocalSharePath= "smb://"+domain+";"+user+":"+pass+"@"+ ip +"/moveinconfig/";
-        SmbUtil.ConnectionState(ip,domain,user,pass);
+//        String user = System.getenv("SHARE_USERNAME");
+        String password = "Asdf19971017";
+//        String password = System.getenv("SHARE_PASSWORD");
+
+        String invoiceGroupReceiversLocalSharePath= "smb://"+domain+";"+user+":"+password+"@"+ ip +"/moveinconfig/";
+        SmbUtil.ConnectionState(ip,domain,user,password);
 
 
         return SmbUtil.getSharedFileList(invoiceGroupReceiversLocalSharePath,targetSubString);

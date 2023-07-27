@@ -9,6 +9,7 @@ import jcifs.smb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,10 +17,14 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class SmbUtil {
 
+
     private static final Logger logger = LoggerFactory.getLogger(SmbUtil.class);
+
 
     public static void ConnectionState(String ip, String domain, String user, String pass) {
         UniAddress dc = null;
@@ -44,31 +49,58 @@ public class SmbUtil {
      * @param targetSubString
      */
     public static Result getSharedFileList(String remoteUrl, String targetSubString) {
-        List<ConfigurationDto> resultList = new ArrayList<>();
-        SmbFile smbFile;
+        ArrayList<ConfigurationDto> result = new ArrayList<>();
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                30,
+                50,
+                500,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingDeque<>(1000),
+                new ThreadPoolExecutor.AbortPolicy());
+
+
+        List<Future<ConfigurationDto>> futureList = new ArrayList<>();
         try {
-            smbFile = new SmbFile(remoteUrl);
+            SmbFile smbFile = new SmbFile(remoteUrl);
             if (smbFile.exists()) {
                 SmbFile[] files = smbFile.listFiles();
                 for (SmbFile f : files) {
-                    // filePath:   smb://colipu;xuwenjie:Asdf19971017@10.10.18.109/moveinconfig/win/
+
                     String filePath = f.getPath();
                     String[] parts = filePath.split("/");
                     // 拿到win和iis目录
                     if (parts[parts.length - 1].equals("win") || parts[parts.length - 1].equals("iis")) {
                         // 递归遍历win和iis下面的文件, 将结果传入resultList
-                        scanFiles(f, resultList, targetSubString);
+                        scanFiles(f, futureList, targetSubString,executor);
                     }
                 }
+
             }
+
+            for (Future<ConfigurationDto> future : futureList) {
+                if (future.get()!= null){
+                    ConfigurationDto configurationDto = future.get();
+                    result.add(configurationDto);
+                }
+            }
+
+
         } catch (MalformedURLException e) {
             logger.error("URL格式错误，文件获取失败，错误原因：{}", ExceptionUtil.stacktraceToString(e));
             throw new BusinessException("URL格式错误，文件获取失败！");
         } catch (SmbException e) {
             logger.error(" SMB协议异常，文件获取失败，错误原因：{}", ExceptionUtil.stacktraceToString(e));
             throw new BusinessException("SMB协议异常，文件获取失败！");
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        return Result.ok(resultList, (long) resultList.size());
+
+
+        executor.shutdown();
+
+        return Result.ok(result, (long) result.size());
     }
 
 
@@ -79,33 +111,48 @@ public class SmbUtil {
      * @param list
      * @param targetSubString
      */
-    public static void scanFiles(SmbFile smbFile, List<ConfigurationDto> list, String targetSubString) {
+    public static ConfigurationDto scanFiles(SmbFile smbFile, List<Future<ConfigurationDto>> list, String targetSubString, ThreadPoolExecutor executor) {
         try {
             if (smbFile.isDirectory()) {
                 SmbFile[] smbFiles = smbFile.listFiles();
                 if (smbFiles != null) {
                     for (SmbFile file : smbFiles) {
+                        // 如果是子目录，递归遍历子目录中的文件
                         if (file.isDirectory()) {
-                            // 如果是子目录，递归遍历子目录中的文件
-                            scanFiles(file, list, targetSubString);
+                            Future<ConfigurationDto> future = executor.submit(() -> {
+                                ConfigurationDto configurationDto = scanFiles(file, list, targetSubString, executor);
+                                if (configurationDto != null) {
+                                    return configurationDto;
+                                } else {
+                                    return null;
+                                }
+                            });
+                            if (future.get() != null){
+                                list.add(future);
+                            }
+
                         } else {
                             // 查找文件中是否包含目标字符串
                             SmbFileInputStream smbFileInputStream = new SmbFileInputStream(file);
                             BufferedReader br = new BufferedReader(new InputStreamReader(smbFileInputStream));
 
                             // 开始查找字符串
+                            StringBuffer sb = new StringBuffer();
                             String line;
                             while ((line = br.readLine()) != null) {
                                 if (line.contains(targetSubString)) {
-                                    // smb://colipu;xuwenjie:Asdf19971017@10.10.18.109/moveinconfig/iis/API_B2BLucene/Web.config
-                                    String filePath = file.getPath();
-                                    String[] parts = filePath.split("@");
-                                    filePath = filePath.substring(parts[0].length() + 1);
-                                    ConfigurationDto configurationDto = new ConfigurationDto(null, filePath, line);
-                                    list.add(configurationDto);
+                                    sb.append(line);
                                 }
                             }
                             br.close();
+                            String filePath = file.getPath();
+                            String[] parts = filePath.split("@");
+                            filePath = filePath.substring(parts[0].length() + 1);
+                            if (sb.length() == 0){
+                                return null;
+                            }
+                            ConfigurationDto configurationDto = new ConfigurationDto(null, filePath, sb.toString());
+                            return configurationDto;
                         }
                     }
                 }
@@ -122,7 +169,12 @@ public class SmbUtil {
         } catch (IOException e) {
             logger.error("获取SmbFileInputStream异常，错误原因: {}", ExceptionUtil.stacktraceToString(e));
             throw new BusinessException("获取SmbFileInputStream异常！", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        return null;
     }
 }
 
