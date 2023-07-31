@@ -1,7 +1,7 @@
 package com.colipu;
 
 import com.colipu.dto.Result;
-import com.colipu.service.IFindConfigService;
+import com.colipu.service.IConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 class FindConfigTests {
 
     @Resource
-    private IFindConfigService findConfigService;
+    private IConfigService findConfigService;
 
 
     @Test

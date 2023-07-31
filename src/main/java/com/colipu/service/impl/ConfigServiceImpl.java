@@ -9,13 +9,12 @@ import com.aliyun.tea.TeaException;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.colipu.dto.ConfigurationDto;
 import com.colipu.dto.Result;
-import com.colipu.service.IFindConfigService;
+import com.colipu.service.IConfigService;
 import com.colipu.utils.GetNacosConfigCallable;
 import com.colipu.utils.SmbUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -23,7 +22,7 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Service
-public class FindConfigServiceImpl implements IFindConfigService {
+public class ConfigServiceImpl implements IConfigService {
 
 
     /**
@@ -107,8 +106,10 @@ public class FindConfigServiceImpl implements IFindConfigService {
     public Result findSharedFileConfig(String ip, String targetSubString) {
         log.info("获取公盘文件===>> 开始");
         String domain = "colipu";
-        String user = System.getenv("SHARE_USERNAME");
-        String password = System.getenv("SHARE_PASSWORD");
+//        String user = System.getenv("SHARE_USERNAME");
+        String user = "xuwenjie";
+//        String password = System.getenv("SHARE_PASSWORD");
+        String password = "Asdf19971017";
 
         String invoiceGroupReceiversLocalSharePath = "smb://" + domain + ";" + user + ":" + password + "@" + ip + "/moveinconfig/";
         SmbUtil.ConnectionState(ip, domain, user, password);
@@ -116,6 +117,7 @@ public class FindConfigServiceImpl implements IFindConfigService {
 
         return SmbUtil.getSharedFileList(invoiceGroupReceiversLocalSharePath, targetSubString);
     }
+
 
     /**
      * 使用AK&SK初始化账号Client
