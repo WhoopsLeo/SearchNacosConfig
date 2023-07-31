@@ -106,10 +106,9 @@ public class ConfigServiceImpl implements IConfigService {
     public Result findSharedFileConfig(String ip, String targetSubString) {
         log.info("获取公盘文件===>> 开始");
         String domain = "colipu";
-//        String user = System.getenv("SHARE_USERNAME");
-        String user = "xuwenjie";
-//        String password = System.getenv("SHARE_PASSWORD");
-        String password = "Asdf19971017";
+        String user = System.getenv("SHARE_USERNAME");
+        String password = System.getenv("SHARE_PASSWORD");
+
 
         String invoiceGroupReceiversLocalSharePath = "smb://" + domain + ";" + user + ":" + password + "@" + ip + "/moveinconfig/";
         SmbUtil.ConnectionState(ip, domain, user, password);
