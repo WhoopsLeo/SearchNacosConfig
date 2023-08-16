@@ -63,3 +63,10 @@
           | - group    | String | 配置文件所属组。               | tr或null                                                     |
           | - dataId   | String | 配置文件的dataID。             | spring_public_java.yml 或10.10.112.21/moveinconfig/iis/InvoiceBasic_API/Web.config |
           | - content  | String | 配置文件中匹配到的那一行数据。 | port: ${MANAGEMENT_SERVER_PORT:8888}                         |
+
+
+- **host文件更改**
+
+    需要在本机的hosts文件中，配置ip与域名的映射。
+   
+    阿里云上配置的ip地址与域名的映射为10.101.103.237	matchconfigapi.colipu.com，所以本机的hosts文件也要改成这样。
