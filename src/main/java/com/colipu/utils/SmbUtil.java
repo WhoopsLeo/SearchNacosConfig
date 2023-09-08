@@ -59,7 +59,7 @@ public class SmbUtil {
                 new ThreadPoolExecutor.AbortPolicy());
 
 
-        List<Future<ConfigurationDto>> futureList = new ArrayList<>();
+        List<Future<List<ConfigurationDto>>> futureList = new ArrayList<>();
         try {
             SmbFile smbFile = new SmbFile(remoteUrl);
             if (smbFile.exists()) {
@@ -77,12 +77,19 @@ public class SmbUtil {
 
             }
 
-            for (Future<ConfigurationDto> future : futureList) {
-                if (future.get()!= null){
-                    ConfigurationDto configurationDto = future.get();
-                    result.add(configurationDto);
+            for (Future<List<ConfigurationDto>> listFuture : futureList) {
+                if (listFuture.get() != null){
+                    for (ConfigurationDto configurationDto : listFuture.get()) {
+                        result.add(configurationDto);
+                    }
                 }
             }
+//            for (Future<ConfigurationDto> future : futureList) {
+//                if (future.get()!= null){
+//                    ConfigurationDto configurationDto = future.get();
+//                    result.add(configurationDto);
+//                }
+//            }
 
 
         } catch (MalformedURLException e) {
@@ -111,7 +118,7 @@ public class SmbUtil {
      * @param list
      * @param targetSubString
      */
-    public static ConfigurationDto scanFiles(SmbFile smbFile, List<Future<ConfigurationDto>> list, String targetSubString, ThreadPoolExecutor executor) {
+    public static List<ConfigurationDto> scanFiles(SmbFile smbFile, List<Future<List<ConfigurationDto>>> list, String targetSubString, ThreadPoolExecutor executor) {
         try {
             if (smbFile.isDirectory()) {
                 SmbFile[] smbFiles = smbFile.listFiles();
@@ -119,10 +126,12 @@ public class SmbUtil {
                     for (SmbFile file : smbFiles) {
                         // 如果是子目录，递归遍历子目录中的文件
                         if (file.isDirectory()) {
-                            Future<ConfigurationDto> future = executor.submit(() -> {
-                                ConfigurationDto configurationDto = scanFiles(file, list, targetSubString, executor);
-                                if (configurationDto != null) {
-                                    return configurationDto;
+                            Future<List<ConfigurationDto>> future = executor.submit(() -> {
+//                                ConfigurationDto configurationDto = scanFiles(file, list, targetSubString, executor);
+                                List<ConfigurationDto> configurationDtoList = scanFiles(file, list, targetSubString, executor);
+
+                                if (configurationDtoList.size() != 0) {
+                                    return configurationDtoList;
                                 } else {
                                     return null;
                                 }
@@ -138,22 +147,30 @@ public class SmbUtil {
                             BufferedReader br = new BufferedReader(new InputStreamReader(smbFileInputStream));
 
                             // 开始查找字符串
-                            StringBuffer sb = new StringBuffer();
+//                            StringBuffer sb = new StringBuffer();
+                            List<String> matchedLines = new ArrayList<>();
                             String line;
                             while ((line = br.readLine()) != null) {
+
                                 if (line.contains(targetSubString)) {
-                                    sb.append(line);
+                                    matchedLines.add(line);
                                 }
                             }
                             br.close();
                             String filePath = file.getPath();
                             String[] parts = filePath.split("@");
                             filePath = filePath.substring(parts[0].length() + 1);
-                            if (sb.length() == 0){
+                            if (matchedLines.size() == 0){
                                 return null;
                             }
-                            ConfigurationDto configurationDto = new ConfigurationDto(null, filePath, sb.toString());
-                            return configurationDto;
+
+                            List<ConfigurationDto> resultList = new ArrayList<>();
+                            for (String matchedLine : matchedLines) {
+                                ConfigurationDto configurationDto = new ConfigurationDto(null, filePath, matchedLine);
+                                resultList.add(configurationDto);
+                            }
+
+                            return resultList;
                         }
                     }
                 }

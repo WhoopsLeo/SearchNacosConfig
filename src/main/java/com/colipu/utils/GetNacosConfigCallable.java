@@ -9,10 +9,13 @@ import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.colipu.dto.ConfigurationDto;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
-public class GetNacosConfigCallable implements Callable<ConfigurationDto> {
+public class GetNacosConfigCallable implements Callable<List<ConfigurationDto>> {
 
     private ListNacosConfigsResponseBody.ListNacosConfigsResponseBodyConfigurations nacosConfig;
 
@@ -152,11 +155,12 @@ public class GetNacosConfigCallable implements Callable<ConfigurationDto> {
      * @param targetSubString
      * @return 目标字符串所在的一行的字符串
      */
-    public String matchSubString(String dataId, String content, String targetSubString) {
+    public List<String> matchSubString(String dataId, String content, String targetSubString) {
         if (!content.contains(targetSubString)) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+//        StringBuffer sb = new StringBuffer();// 拼接字符串解锁这个
+        List<String> matchedLine = new ArrayList<>();
         String[] linesArray = content.split("\n");
 //        sb.append("DataId: " + dataId + " ");
         for (int i = 0; i < linesArray.length; i++) {
@@ -166,20 +170,21 @@ public class GetNacosConfigCallable implements Callable<ConfigurationDto> {
 //                if (i - 1 >= 0) {
 //                    sb.append(linesArray[i - 1]);
 //                }
-                sb.append(line);
+//                sb.append(line);// 拼接字符串解锁这个
+                matchedLine.add(line);
 //                if (i + 1 < linesArray.length) {
 //                    sb.append(linesArray[i + 1]);
 //                }
             }
         }
-        return sb.toString();
+        return matchedLine;
     }
 
 
     @Override
-    public ConfigurationDto call() {
+    public List<ConfigurationDto> call() {
         try{
-            ConfigurationDto configurationDto = new ConfigurationDto();
+
             String dataId = nacosConfig.getDataId();
             String group = nacosConfig.getGroup();
             String content;
@@ -188,14 +193,19 @@ public class GetNacosConfigCallable implements Callable<ConfigurationDto> {
                 System.out.println("调阿里云接口，获取的Nacos配置文件为null");
                 return null;
             }
-            String matched = matchSubString(dataId, content, targetSubString);
-            if(matched == null){
+            List<String> matchedLines = matchSubString(dataId, content, targetSubString);
+            if(matchedLines == null){
                 return null;
             }
-            configurationDto.setGroup(group);
-            configurationDto.setDataId(dataId);
-            configurationDto.setContent(matched);
-            return configurationDto;
+            ArrayList<ConfigurationDto> result = new ArrayList<>();
+            for (String mathedLine : matchedLines) {
+                ConfigurationDto configurationDto = new ConfigurationDto();
+                configurationDto.setGroup(group);
+                configurationDto.setDataId(dataId);
+                configurationDto.setContent(mathedLine);
+                result.add(configurationDto);
+            }
+            return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

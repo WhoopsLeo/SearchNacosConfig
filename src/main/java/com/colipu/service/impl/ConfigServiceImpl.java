@@ -61,25 +61,27 @@ public class ConfigServiceImpl implements IConfigService {
             int numTasks = nacosConfigsList.size();
             // 利用CountDownLatch，确保线程池关闭时，所有配置文件都搜索过了
             CountDownLatch latch = new CountDownLatch(numTasks);
-            List<Future<ConfigurationDto>> futures = new ArrayList<>();
+            List<Future<List<ConfigurationDto>>> futures = new ArrayList<>();
 
             for (ListNacosConfigsResponseBodyConfigurations nacosConfig : nacosConfigsList) {
 
                 GetNacosConfigCallable nacosConfigCallable = new GetNacosConfigCallable(nacosConfig, client, instanceId, nameSpaceId, nacosConfig.getDataId(), nacosConfig.getGroup(), targetSubString, latch);
-                Future<ConfigurationDto> future = executor.submit(nacosConfigCallable);
+                Future<List<ConfigurationDto>> future = executor.submit(nacosConfigCallable);
                 futures.add(future);
             }
             // 等待CountDownLatch减为0后，在执行后面的代码
             latch.await(20, TimeUnit.SECONDS);
 
 
-            for (Future<ConfigurationDto> future : futures) {
-                if (future.get() != null) {
-                    ConfigurationDto configurationDto = future.get();
-                    resultList.add(configurationDto);
+            for (Future<List<ConfigurationDto>> future : futures) {
+                if (future.get() != null){
+                    for (ConfigurationDto configurationDto : future.get()) {
+                        resultList.add(configurationDto);
+                    }
                 }
-
             }
+
+
             // 关闭线程池
             executor.shutdown();
 
