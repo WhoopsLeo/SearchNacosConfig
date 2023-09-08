@@ -130,7 +130,7 @@ public class SmbUtil {
 //                                ConfigurationDto configurationDto = scanFiles(file, list, targetSubString, executor);
                                 List<ConfigurationDto> configurationDtoList = scanFiles(file, list, targetSubString, executor);
 
-                                if (configurationDtoList.size() != 0) {
+                                if (configurationDtoList != null) {
                                     return configurationDtoList;
                                 } else {
                                     return null;
