@@ -1,4 +1,4 @@
-package com.colipu.dto;
+package com.colipu.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

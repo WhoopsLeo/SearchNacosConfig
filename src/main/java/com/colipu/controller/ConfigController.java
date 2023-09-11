@@ -3,8 +3,8 @@ package com.colipu.controller;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.excel.EasyExcel;
-import com.colipu.dto.ConfigurationDto;
-import com.colipu.dto.Result;
+import com.colipu.model.dto.Configuration.ConfigurationDto;
+import com.colipu.model.dto.Result;
 import com.colipu.exception.BusinessException;
 import com.colipu.service.IConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Config")
+@RequestMapping("/opstools/Config")
 @Slf4j
 public class ConfigController {
 

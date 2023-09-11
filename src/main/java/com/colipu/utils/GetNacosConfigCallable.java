@@ -7,10 +7,9 @@ import com.aliyun.mse20190531.models.ListNacosConfigsResponseBody;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
-import com.colipu.dto.ConfigurationDto;
+import com.colipu.model.dto.Configuration.ConfigurationDto;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;

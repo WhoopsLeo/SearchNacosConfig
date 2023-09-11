@@ -1,15 +1,14 @@
 package com.colipu.utils;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.colipu.dto.ConfigurationDto;
-import com.colipu.dto.Result;
+import com.colipu.model.dto.Configuration.ConfigurationDto;
+import com.colipu.model.dto.Result;
 import com.colipu.exception.BusinessException;
 import jcifs.UniAddress;
 import jcifs.smb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +17,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class SmbUtil {
 

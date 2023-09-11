@@ -15,6 +15,7 @@
     <description>SearchNaosConfigSpring</description>
     <properties>
         <java.version>8</java.version>
+        <docker.version>3.2.11</docker.version>
     </properties>
     <dependencies>
         <dependency>
@@ -46,6 +47,11 @@
             <groupId>com.aliyun</groupId>
             <artifactId>mse20190531</artifactId>
             <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>cr20181201</artifactId>
+            <version>1.0.11</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -86,6 +92,35 @@
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>3.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.kubernetes</groupId>
+            <artifactId>client-java</artifactId>
+            <version>18.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java</artifactId>
+            <version>${docker.version}</version>
+            <exclusions>
+                <!-- Conflict with kurento-jsonrpc-client -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java-core</artifactId>
+            <version>${docker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java-transport-httpclient5</artifactId>
+            <version>${docker.version}</version>
         </dependency>
     </dependencies>
 

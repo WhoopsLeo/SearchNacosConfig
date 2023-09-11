@@ -1,6 +1,6 @@
 package com.colipu;
 
-import com.colipu.dto.Result;
+import com.colipu.model.dto.Result;
 import com.colipu.service.IConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

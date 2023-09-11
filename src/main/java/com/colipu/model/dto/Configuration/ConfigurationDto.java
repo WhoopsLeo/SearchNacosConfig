@@ -1,4 +1,4 @@
-package com.colipu.dto;
+package com.colipu.model.dto.Configuration;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
