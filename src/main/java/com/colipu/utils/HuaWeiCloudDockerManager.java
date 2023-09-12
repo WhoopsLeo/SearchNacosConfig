@@ -41,7 +41,7 @@ public class HuaWeiCloudDockerManager {
      */
     public void init() {
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost("tcp://localhost:2375")
+                .withDockerHost("tcp://10.101.101.77:2376")
                 .withRegistryUrl("swr.cn-east-3.myhuaweicloud.com")
                 .withRegistryUsername("cn-east-3@NSJUCVPWSEPOHTOEJZHA")
                 .withRegistryPassword("d362f9fc6d276e6c8c04799dfeefbf77020f20c9f2e79b0c606f83c234912470")
