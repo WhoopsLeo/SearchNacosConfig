@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.colipu</groupId>
-    <artifactId>SearchConfig</artifactId>
+    <artifactId>OpsTools</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SearchNaosConfigSpring</name>
-    <description>SearchNaosConfigSpring</description>
+    <name>OpsTools</name>
+    <description>OpsTools</description>
     <properties>
         <java.version>8</java.version>
         <docker.version>3.2.11</docker.version>

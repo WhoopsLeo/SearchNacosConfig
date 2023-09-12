@@ -7,4 +7,5 @@ public interface IDockerService {
     boolean pushImage(String newImageName);
 
     boolean tagImage(String oldImageName, String newImageName);
+
 }

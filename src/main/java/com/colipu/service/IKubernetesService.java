@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IKubernetesService {
 
-    List<DeploymentsAndImagesDTO> findDeploymentsAndImages();
+    List<DeploymentsAndImagesDTO> findDeploymentsAndImages(String nameSpace);
 
 }

@@ -28,6 +28,9 @@ public class RepositoryService implements IRepositoryService {
             com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
             com.aliyun.cr20181201.models.ListRepositoryResponse resp = client.listRepositoryWithOptions(listRepositoryRequest, runtime);
             List<ListRepositoryResponseBodyRepositories> repositories = resp.getBody().getRepositories();
+            if (repositories.get(0) == null) {
+                return null;
+            }
             // crr-c9z19tpk3pe7pfge
             String repoId= repositories.get(0).getRepoId();
 

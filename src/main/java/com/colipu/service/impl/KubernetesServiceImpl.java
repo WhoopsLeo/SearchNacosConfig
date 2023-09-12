@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 public class KubernetesServiceImpl implements IKubernetesService {
     @Override
-    public List<DeploymentsAndImagesDTO> findDeploymentsAndImages() {
+    public List<DeploymentsAndImagesDTO> findDeploymentsAndImages(String nameSpace) {
 
         try {
             //      file path to your KubeConfig
@@ -52,42 +52,42 @@ public class KubernetesServiceImpl implements IKubernetesService {
         List<DeploymentsAndImagesDTO> deploymentsAndImagesDTOs = new ArrayList<>();
         try {
 
-            List<String> nameSpaces = new ArrayList<>(Arrays.asList("erp", "tr", "web"));
-            for (String nameSpace : nameSpaces) {
-                // 通过namespace获取deployment
-                V1DeploymentList deployment = apiApps.listNamespacedDeployment(nameSpace, null, null, null, null, null, null, null, null, null, null);
-                if (deployment.getItems().size() == 0){
-                    continue;
+//            List<String> nameSpaces = new ArrayList<>(Arrays.asList("erp", "tr", "web"));
+
+            // 通过namespace获取deployment
+            V1DeploymentList deployment = apiApps.listNamespacedDeployment(nameSpace, null, null, null, null, null, null, null, null, null, null);
+            if (deployment.getItems().size() == 0) {
+                return null;
+            }
+            for (V1Deployment item : deployment.getItems()) {
+                if (item.getMetadata() == null) {
+                    break;
                 }
-                for (V1Deployment item : deployment.getItems()) {
-                    if (item.getMetadata() == null) {
-                        break;
-                    }
-                    DeploymentsAndImagesDTO deploymentsAndImagesDTO = new DeploymentsAndImagesDTO();
-                    String deploymentName = item.getMetadata().getName();
-                    deploymentsAndImagesDTO.setDeploymentName(deploymentName);
+                DeploymentsAndImagesDTO deploymentsAndImagesDTO = new DeploymentsAndImagesDTO();
+                String deploymentName = item.getMetadata().getName();
+                deploymentsAndImagesDTO.setDeploymentName(deploymentName);
 
-                    // 通过deploymentName和nameSpace获得Deployment
-                    V1Deployment v1Deployment = apiApps.readNamespacedDeployment(deploymentName, nameSpace, null);
-                    if (v1Deployment.getSpec() == null) {
-                        break;
-                    }
-
-                    // 通过deployment获取pod里的容器
-                    List<V1Container> containers = v1Deployment.getSpec().getTemplate().getSpec().getContainers();
-                    // 因为所有容器都来自于同一个镜像，所以这里只取一个
-                    String imageName = containers.get(0).getImage();
-                    deploymentsAndImagesDTO.setImageName(imageName);
-                    String[] split = imageName.split("[/:]");
-                    deploymentsAndImagesDTO.setImageRepoName(split[split.length - 2]);
-
-                    log.info(deploymentsAndImagesDTO.toString());
-
-                    deploymentsAndImagesDTOs.add(deploymentsAndImagesDTO);
-
+                // 通过deploymentName和nameSpace获得Deployment
+                V1Deployment v1Deployment = apiApps.readNamespacedDeployment(deploymentName, nameSpace, null);
+                if (v1Deployment.getSpec() == null) {
+                    break;
                 }
+
+                // 通过deployment获取pod里的容器
+                List<V1Container> containers = v1Deployment.getSpec().getTemplate().getSpec().getContainers();
+                // 因为所有容器都来自于同一个镜像，所以这里只取一个
+                String imageName = containers.get(0).getImage();
+                deploymentsAndImagesDTO.setImageName(imageName);
+                String[] split = imageName.split("[/:]");
+                deploymentsAndImagesDTO.setImageRepoName(split[split.length - 2]);
+
+                log.info(deploymentsAndImagesDTO.toString());
+
+                deploymentsAndImagesDTOs.add(deploymentsAndImagesDTO);
 
             }
+
+
         } catch (ApiException e) {
             log.error("获取K8S的Deployment对象异常，异常信息为：" + e);
             return null;

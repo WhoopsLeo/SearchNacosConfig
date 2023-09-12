@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Service("HuaWeiCloud")
-public class DockerServiceHuaWeimpl implements IDockerService {
+public class DockerServiceHuaWeiImpl implements IDockerService {
 
     @Resource
     private HuaWeiCloudDockerManager dockerManager;
