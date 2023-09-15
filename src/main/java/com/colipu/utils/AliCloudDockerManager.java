@@ -41,7 +41,8 @@ public class AliCloudDockerManager {
      */
     public void init() {
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost("tcp://localhost:2375")
+//                .withDockerHost("tcp://localhost:2375")
+                .withDockerHost("tcp://10.10.10.100:2375")
                 .withRegistryUrl("https://shc0itacrhub01-registry-vpc.cn-shanghai.cr.aliyuncs.com")
                 .withRegistryUsername("xuwenjie@colipualiyun")
                 .withRegistryPassword("wenjie19971017")
@@ -62,7 +63,19 @@ public class AliCloudDockerManager {
      */
     public void downloadDockerImage(String image, int secondsOfWait) throws InterruptedException {
         // 拉取镜像
-        this.dockerClient.pullImageCmd(image).exec(new PullImageResultCallback()).awaitCompletion(secondsOfWait,
+        this.dockerClient.pullImageCmd(image).exec(new PullImageResultCallback(){
+            @Override
+            public void onNext(PullResponseItem item) {
+                log.info(item.toString());
+                super.onNext(item);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                log.error("Failed to exec start:" + throwable.getMessage());
+                super.onError(throwable);
+            }
+        }).awaitCompletion(secondsOfWait,
                 TimeUnit.SECONDS);
         log.info("Pull Docker image '{}' success", image);
     }
