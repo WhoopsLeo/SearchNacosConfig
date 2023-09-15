@@ -46,6 +46,11 @@ public class PullAndPushDockerImplService implements IPullAndPushDockerService {
             log.info("push镜像：" + newImageName + "，成功！");
         }
 
+        dockerServiceHuawei.removeImage(imageName,true);
+        log.info("remove镜像：" + imageName + "，成功！");
+        dockerServiceHuawei.removeImage(newImageName,true);
+        log.info("remove镜像：" + newImageName + "，成功！");
+
 
     }
 }

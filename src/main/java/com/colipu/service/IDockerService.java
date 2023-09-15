@@ -8,4 +8,6 @@ public interface IDockerService {
 
     boolean tagImage(String oldImageName, String newImageName);
 
+    void removeImage(String imageName, boolean force);
+
 }

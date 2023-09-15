@@ -64,4 +64,14 @@ public class DockerServiceAliImpl implements IDockerService {
         return dockerManager.dockerImageExistsLocally(newImageName + ":" + newTag);
     }
 
+    /**
+     * 通过镜像名删除镜像
+     * @param imageName 镜像名(带版本)
+     * @param force 是否强制删除
+     */
+    @Override
+    public void removeImage(String imageName, boolean force) {
+        dockerManager.removeImage(imageName, force);
+    }
+
 }

@@ -179,6 +179,14 @@ public class AliCloudDockerManager {
     }
 
     /**
+     * 删除镜像
+     * @param imageId
+     */
+    public void removeImage(String imageId, boolean force) {
+        dockerClient.removeImageCmd(imageId).withForce(force).exec();
+    }
+
+    /**
      * 强制删除以xxx开始的容器
      *
      * @param imageName
