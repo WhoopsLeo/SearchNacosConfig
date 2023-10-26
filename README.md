@@ -65,12 +65,12 @@
           | - content  | String | 配置文件中匹配到的那一行数据。 | port: ${MANAGEMENT_SERVER_PORT:8888}                         |
 
 
-- **host文件更改**
+- ~~**host文件更改**~~
 
-    需要在本机的hosts文件中，配置ip与域名的映射。
+    ~~需要在本机的hosts文件中，配置ip与域名的映射。~~
    
-    阿里云上配置的ip地址与域名的映射为10.101.103.237	matchconfigapi.colipu.com，所以本机的hosts文件也要改成这样。
-
+    ~~阿里云上配置的ip地址与域名的映射为10.101.103.237	opstools.colipu.com，所以本机的hosts文件也要改成这样。~~
+    已配置，不需要自己添加host了
 
 
 # 华为云发布接口
@@ -141,6 +141,6 @@
           | total     | null    | null                    | null                                                                          |
 
 
-- **需要暴露Docker的2375端口**
+- **因为需要借助Docker客户端进行镜像拉取和推送，所以需要暴露Docker客户端的2375端口**
 
  
