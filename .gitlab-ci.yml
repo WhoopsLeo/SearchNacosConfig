@@ -5,7 +5,7 @@ include:
 
 variables:
   # 应用名称(最新版要求不要带api字样)
-  APP_NAME: opstools-matchAndDeploy-java-api
+  APP_NAME: opstools-match-deploy-java-api
   # 应用所属命名空间 如果不同环境不一样，则添加后缀配置（后缀配置优先）
   K8S_DEPLOYMENT_NAMESPACE: ops
   K8S_DEPLOYMENT_NAMESPACE_DEV: ops
